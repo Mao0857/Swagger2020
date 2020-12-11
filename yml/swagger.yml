@@ -1,0 +1,220 @@
+swagger: '2.0'
+info:
+  title: SwaggerでマンガAPIを遊ぶ
+  description: マンガのためのAPI
+  version: 1.0.0
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+# tags are used for organizing operations
+tags:
+- name: manga
+  description: マンガ
+  externalDocs:
+    description: 詳細
+    url: https://manga_api
+- name: chapter
+  description: チャプター
+  externalDocs:
+    description: 詳細
+    url: https://chapter_api
+- name: comment
+  description: コメント
+
+paths:
+  /mangas:
+    get:
+      tags:
+      - manga
+      summary: Get list of registered mangas
+      operationId: getMangas
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/json
+      - application/xml
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Manga'
+  /mangas/{id}:
+    get:
+      tags:
+      - manga
+      summary: Get manga by id
+      operationId: getMangaById
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: id
+        in: path
+        type: integer
+        format: int64
+        description: ID of manga to return
+        required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Manga'
+  /chapters/{id}:
+    get:
+      tags:
+      - chapter
+      summary: Get chapter by id
+      operationId: getChapterById
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: id
+        in: path
+        type: integer
+        format: int64
+        description: ID of chapter to return
+        required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Chapter'
+  /comments:
+    get:
+      tags:
+      - comment
+      summary: Get comment by title_id
+      operationId: getCommentsByTitleId
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: titleId
+        in: query
+        type: integer
+        format: int64
+        description: ID of title id
+        required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Comment'
+    put:
+      tags:
+      - comment
+      summary: Send comment to title
+      operationId: putCommentByTitleId
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: titleId
+        in: query
+        type: integer
+        format: int64
+        description: ID of title id
+        required: true
+      - name: userId
+        in: query
+        type: integer
+        format: int64
+        description: ID of user id
+        required: true
+      - name: body
+        in: query
+        type: string
+        description: comment
+        required: true
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Bad Request
+definitions:
+  Manga:
+    type: object
+    required:
+    - id
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      name:
+        type: string
+        example: クレッフィーの大冒険！
+      releaseDate:
+        type: string
+        format: date-time
+        example: '2020-12-01 00:00:00.000'
+      chapters:
+        type: array
+        minLength: 1
+        items:
+          $ref: '#/definitions/Chapter'
+        example:
+        - {id: 1, name: '威張れ！クレッフィー！'}
+        - {id: 2, name: '電磁波！クレッフィー！'}
+  Chapter:
+    required:
+    - id
+    - name
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: 威張れ！クレッフィー！
+      pages:
+        type: array
+        items:
+          type: string
+          format: url
+        example:
+        - '/image/1'
+        - '/image/2'
+  Comment:
+    required:
+    - userId
+    - body
+    properties:
+      id:
+        type: integer
+        example: 1
+      userId:
+        type: integer
+        example: 1
+      titleId:
+        type: integer
+        example: 1
+      body:
+        type: string
+        example: IBARU JAPAN
+# Added by API Auto Mocking Plugin
+host: manga.example.com
+basePath: /api/v1
+schemes:
+ - https
